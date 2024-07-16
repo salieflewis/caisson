@@ -1,23 +1,13 @@
-import { getDefaultConfig } from 'connectkit'
-import { createConfig, configureChains } from 'wagmi'
-import { mainnet, optimism, arbitrum, goerli, sepolia } from 'wagmi/chains'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { publicProvider } from 'wagmi/providers/public'
+import { http, createConfig } from 'wagmi'
+import { mainnet, sepolia } from 'wagmi/chains'
 
 const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY
 const walletConnectID = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID
 
-const { chains } = configureChains(
-  [mainnet, optimism, arbitrum, goerli, sepolia],
-  [alchemyProvider({ apiKey: alchemyKey as string }), publicProvider()],
-)
-
-export const config = createConfig(
-  getDefaultConfig({
-    alchemyId: alchemyKey as string,
-    walletConnectProjectId: walletConnectID as string,
-    appName: 'Caisson',
-    autoConnect: true,
-    chains,
-  }),
-)
+export const config = createConfig({
+  chains: [mainnet, sepolia],
+  transports: {
+    [mainnet.id]: http(),
+    [sepolia.id]: http(),
+  },
+})
